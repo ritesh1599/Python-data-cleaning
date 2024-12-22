@@ -38,16 +38,15 @@ def clean_and_transform_data(df, config):
     df = df.rename(columns=column_mappings)
 
     # Add calculated columns
-    calculated_columns = config.get("calculated_columns", [])
-    for calc in calculated_columns:
-        col_name, formula = calc["name"], calc["formula"]
-        df[col_name] = eval(formula, {"df": df})
+    # calculated_columns = config.get("calculated_columns", [])
+    # for calc in calculated_columns:
+    #     col_name, formula = calc["name"], calc["formula"]
+    #     df[col_name] = eval(formula, {"df": df})
 
     # Filter rows
-    filters = config.get("filters", [])
-    for condition in filters:
-        df = df.query(condition)
-
+    # filters = config.get("filters", [])
+    # for condition in filters:
+    #     df = df.query(condition)
     return df
 
 
@@ -63,14 +62,16 @@ def save_data(df, output_file):
 
 def main():
     # Load configuration
-    config_file = "config.json"
+    config_file = r'C:\Users\riteshgupta6\PycharmProjects\Python-data-cleaning\data\config.json'
     config = load_config(config_file)
 
     # Load raw data
     input_file = config["input_file"]
+    # print('done')
     logging.info(f"Loading raw data from {input_file}")
     if input_file.endswith(".csv"):
         raw_data = pd.read_csv(input_file)
+
     elif input_file.endswith(".xlsx"):
         raw_data = pd.read_excel(input_file)
     else:
