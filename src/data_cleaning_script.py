@@ -1,12 +1,12 @@
 import pandas as pd
 import json
 import logging
+import mysql.connector
 from datetime import datetime
 
 # Setup logging
 logging.basicConfig(filename="data_transform.log", level=logging.INFO,
                     format="%(asctime)s - %(levelname)s - %(message)s")
-
 
 def load_config(config_file):
     """Load transformation configuration."""
@@ -59,6 +59,36 @@ def save_data(df, output_file):
     else:
         raise ValueError("Unsupported file format. Use .csv or .parquet")
 
+def save_to_mysql(df, config):
+    """save transformed data to MySQL db"""
+    db_config = config["db_config"]
+    table_name = config["sales_data"]
+
+    #connect to MySQL
+    conn = mysql.connector.connect(
+        host=db_config["localhost"],
+        port=db.config["3306"],
+        user=db_config["root"],
+        password=db_config["1234"],
+        database=db_config["sales_db_new"]
+    )
+    cursor = conn.cursor()
+
+    # Create table if not exists
+    create_table_query = config["create_table_query"]
+    cursor.execute(create_table_query)
+
+    # Insert data into MySQL
+    for _, row in df.iterrows():
+        placeholders = ', '.join(['%s'] * len(row))
+        insert_query = f"INSERT INTO {table_name} VALUES ({placeholders})"
+        cursor.execute(insert_query, tuple(row))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+    logging.info("Data successfully loaded into MySQL database")
+
 
 def main():
     # Load configuration
@@ -92,13 +122,19 @@ def main():
         logging.error(f"Error during transformation: {e}")
         return
 
-    # Save transformed data
-    output_file = config["output_file"]
-    logging.info(f"Saving transformed data to {output_file}")
+    # Save transformed data to MySQL database
     try:
-        save_data(transformed_data, output_file)
+        save_to_mysql(transformed_data, config)
     except Exception as e:
-        logging.error(f"Error saving data: {e}")
+        logging.error(f"Error saving data to MySQL: {e}")
+
+    # Save transformed data
+    # output_file = config["output_file"]
+    # logging.info(f"Saving transformed data to {output_file}")
+    # try:
+    #     save_data(transformed_data, output_file)
+    # except Exception as e:
+    #     logging.error(f"Error saving data: {e}")
 
 
 if __name__ == "__main__":
