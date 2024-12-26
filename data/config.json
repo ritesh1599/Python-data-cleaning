@@ -1,17 +1,16 @@
 {
     "input_file": "C:/Users/riteshgupta6/PycharmProjects/Python-data-cleaning/data/Sales.csv",
     "output_file": "cleaned_data.csv",
-    "required_columns": ["Gender", "State", "Payment_Method", "Customer_Status"],
+    "required_columns": ["sales_id", "time_id", "product_id", "region_id"],
     "remove_duplicates": true,
     "fill_na": {
-        "State": "None",
-        "Gender": "LGBTQ"
+        "time_id": "0"
     },
     "rename_columns": {
-        "transaction_amount": "transn_amt",
+        "transaction_amount": "transn_amt"
     },
     "db_config": {
-        "host": "localhost:3306",
+        "host": "localhost",
         "port": "3306",
         "user": "root",
         "password": "1234",

@@ -62,15 +62,15 @@ def save_data(df, output_file):
 def save_to_mysql(df, config):
     """save transformed data to MySQL db"""
     db_config = config["db_config"]
-    table_name = config["sales_data"]
+    table_name = config["db_table"]
 
     #connect to MySQL
     conn = mysql.connector.connect(
-        host=db_config["localhost"],
-        port=db.config["3306"],
-        user=db_config["root"],
-        password=db_config["1234"],
-        database=db_config["sales_db_new"]
+        host=db_config["host"],
+        port=int(db_config["port"]),
+        user=db_config["user"],
+        password=db_config["password"],
+        database=db_config["database"]
     )
     cursor = conn.cursor()
 
